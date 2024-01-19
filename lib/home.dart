@@ -45,14 +45,27 @@ class _MyHomePageState extends State<MyHomePage> {
                   return ListView.builder(
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
-                      return Dismissible(
-                        background: const Card(
-                          color: Colors.red,
-                        ),
-                        onDismissed: (direction) {},
-                        key: ValueKey<int>(snapshot.data![index].id!),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                      return InkWell(
+                        onDoubleTap: () {
+                          _dbHelper.updateData(NotesModel(
+                            id: snapshot.data![index].id!,
+                            age: 24,
+                            title: "hehe",
+                            description: "description",
+                            email: "email@gmail.com",
+                          ));
+                          setState(() {
+                            loadData();
+                          });
+                        },
+                        child: Dismissible(
+                          background: const Card(
+                              color: Colors.red, child: Icon(Icons.delete)),
+                          onDismissed: (DismissDirection direction) {
+                            _dbHelper.deleteData(snapshot.data![index].id!);
+                            loadData();
+                          },
+                          key: ValueKey<int>(snapshot.data![index].id!),
                           child: Card(
                             child: ListTile(
                               leading: CircleAvatar(
@@ -80,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 .insertData(
                     model: const NotesModel(
                         age: 22,
-                        title: "My Notes 3",
+                        title: "My Notes",
                         description: "ABCdasjkhks",
                         email: "xyz@gmail.com"))
                 .then((value) {

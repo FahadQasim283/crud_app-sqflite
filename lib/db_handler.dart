@@ -26,15 +26,24 @@ class DBHelper {
         "CREATE TABLE notes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, age INTEGER NOT NULL, description TEXT NOT NULL, email TEXT )");
   }
 
-  Future<NotesModel> insertData({required NotesModel model}) async {
+  Future<void> insertData({required NotesModel model}) async {
     var data = await getDataBase;
     await data!.insert("notes", model.toDb());
-    return model;
   }
 
   Future<List<NotesModel>> getData() async {
     var dbData = await getDataBase;
     final List<Map<String, dynamic>> result = await dbData!.query("notes");
     return result.map((e) => NotesModel.fromDb(e)).toList();
+  }
+
+  Future<void> deleteData(int id) async {
+    var db = await getDataBase;
+    db!.delete("notes", where: "id = ?", whereArgs: [id]);
+  }
+
+  Future<void> updateData(NotesModel model) async {
+    var db = await getDataBase;
+    db!.update("notes", model.toDb(), where: "id = ?", whereArgs: [model.id]);
   }
 }
